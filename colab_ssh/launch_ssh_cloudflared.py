@@ -10,6 +10,7 @@ from .utils.expose_env_variable import expose_env_variable
 import importlib
 import sys
 import signal
+import requests
 
 deb_install = create_deb_installer()
 
@@ -77,20 +78,20 @@ def launch_ssh_cloudflared(
         if verbose:
             print(f"DEBUG: Cloudflared process: PID={proc.pid}")
         time.sleep(sleep_time)
-        try:
-            info = get_argo_tunnel_config()
-            break
-        except Exception as e:
-            os.kill(proc.pid, signal.SIGKILL)
-            if verbose:
-                print(f"DEBUG: Exception: {e.args[0]}")
-                print(f"DEBUG: Killing {proc.pid}. Retrying...")
-        # Increase the sleep time and try again
-        sleep_time *= 1.5
+        res = (rquests.get("http://127.0.0.1:45678/ready")).json()
+        if res["status"]==200: break
+        else:
+          os.kill(proc.pid, signal.SIGKILL)
+          if verbose:
+            print(f"DEBUG: Exception: {e.args[0]}")
+            print(f"DEBUG: Killing {proc.pid}. Retrying...")
+         # Increase the sleep time and try again
+         sleep_time *= 1.5
 
     if verbose:
         print("DEBUG:", info)
-
+        
+    info={}
     if info:
         # print("Successfully running on ", "{}:{}".format(host, port))
         if importlib.util.find_spec("IPython") and 'ipykernel' in sys.modules:
