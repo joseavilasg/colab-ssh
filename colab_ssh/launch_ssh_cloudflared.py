@@ -15,7 +15,6 @@ deb_install = create_deb_installer()
 def launch_ssh_cloudflared(
         password="",
         verbose=False,
-        prevent_interrupt=False,
         kill_other_processes=True):
   # Kill any cloudflared process if running
   if kill_other_processes:
@@ -60,17 +59,12 @@ def launch_ssh_cloudflared(
 
   # Prepare the cloudflared command
   popen_command = f'cloudflared tunnel  --metrics localhost:45678 {" ".join(extra_params)} run'
-  preexec_fn = None
-  if prevent_interrupt:
-    popen_command = 'nohup ' + popen_command
-    preexec_fn = os.setpgrp
-  popen_command = shlex.split(popen_command)
 
   # Initial sleep time
   sleep_time = 5.0
 
   # Create tunnel and retry if failed
-  proc = Popen(popen_command, stdout=PIPE, preexec_fn=preexec_fn)
+  proc = Popen(popen_command, stdout=PIPE, close_fds=True)
   time.sleep(sleep_time)
 
   info = {"port": 22}
