@@ -67,7 +67,11 @@ def launch_ssh_cloudflared(
   proc = Popen(popen_command, stdout=PIPE, close_fds=True)
   time.sleep(sleep_time)
 
-  info = {"port": 22}
+  info = {
+      "domain": "",
+      "protocol": "",
+      "port": 22
+  }
   if info:
     # print("Successfully running on ", "{}:{}".format(host, port))
     if importlib.util.find_spec("IPython") and 'ipykernel' in sys.modules:
