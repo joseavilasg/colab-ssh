@@ -78,7 +78,7 @@ def launch_ssh_cloudflared(
         if verbose:
             print(f"DEBUG: Cloudflared process: PID={proc.pid}")
         time.sleep(sleep_time)
-        res = (rquests.get("http://127.0.0.1:45678/ready")).json()
+        res = (requests.get("http://127.0.0.1:45678/ready")).json()
         if res["status"]==200: break
         else:
           os.kill(proc.pid, signal.SIGKILL)
