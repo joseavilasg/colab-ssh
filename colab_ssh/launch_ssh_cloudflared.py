@@ -56,9 +56,9 @@ def launch_ssh_cloudflared(
   os.system('service ssh start')
 
   extra_params = []
-
   # Prepare the cloudflared command
   popen_command = f'cloudflared tunnel  --metrics localhost:45678 {" ".join(extra_params)} run'
+  popen_command = shlex.split(popen_command)
 
   # Initial sleep time
   sleep_time = 5.0
