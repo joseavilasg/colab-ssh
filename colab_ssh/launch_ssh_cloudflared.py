@@ -61,7 +61,7 @@ def launch_ssh_cloudflared(
     open('cloudflared.log', 'w').close()
 
     # Prepare the cloudflared command
-    popen_command = f'!cloudflared tunnel --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)} run'
+    popen_command = f'cloudflared tunnel --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)} run'
     preexec_fn = None
     if prevent_interrupt:
         popen_command = 'nohup ' + popen_command
