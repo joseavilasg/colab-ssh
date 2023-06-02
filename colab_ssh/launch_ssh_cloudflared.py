@@ -57,7 +57,6 @@ def launch_ssh_cloudflared(
   os.system('service ssh start')
 
   extra_params = []
-  info = None
 
   # Prepare the cloudflared command
   popen_command = f'cloudflared tunnel  --metrics localhost:45678 {" ".join(extra_params)} run'
@@ -74,7 +73,7 @@ def launch_ssh_cloudflared(
   proc = Popen(popen_command, stdout=PIPE, preexec_fn=preexec_fn)
   time.sleep(sleep_time)
 
-  info = {}
+  info = {"port": 22}
   if info:
     # print("Successfully running on ", "{}:{}".format(host, port))
     if importlib.util.find_spec("IPython") and 'ipykernel' in sys.modules:
