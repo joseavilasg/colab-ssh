@@ -86,7 +86,7 @@ def launch_ssh_cloudflared(
             print(f"DEBUG: Exception: {e.args[0]}")
             print(f"DEBUG: Killing {proc.pid}. Retrying...")
          # Increase the sleep time and try again
-         sleep_time *= 1.5
+        sleep_time *= 1.5
 
     if verbose:
         print("DEBUG:", info)
