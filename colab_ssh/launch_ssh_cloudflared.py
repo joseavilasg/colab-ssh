@@ -24,11 +24,10 @@ def launch_ssh_cloudflared(
         os.system("kill -9 $(ps aux | grep 'cloudflared' | awk '{print $2}')")
 
     # Download cloudflared
-    if not os.path.isfile("cloudflared"):
-        run_command(
-            "wget -q -nc https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64")
-        run_command("mv cloudflared-linux-amd64 cloudflared")
-        run_command("chmod +x cloudflared")
+    if not os.path.isfile("/usr/local/bin/cloudflared"):
+        run_command("wget -q -nc https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64")
+        run_command("mv cloudflared-linux-amd64 /usr/local/bin/cloudflared")
+        run_command("chmod +x /usr/local/bin/cloudflared")
     else:
         if verbose:
             print("DEBUG: Skipping cloudflared installation")
@@ -62,7 +61,7 @@ def launch_ssh_cloudflared(
     open('cloudflared.log', 'w').close()
 
     # Prepare the cloudflared command
-    popen_command = f'./cloudflared tunnel --url ssh://localhost:22 --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
+    popen_command = f'cloudflared tunnel run --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
     preexec_fn = None
     if prevent_interrupt:
         popen_command = 'nohup ' + popen_command
@@ -117,23 +116,7 @@ def launch_ssh_cloudflared(
     You can also connect with VSCode Remote SSH (Ctrl+Shift+P and type "Connect to Host..."). Then, paste the following hostname in the opened command palette:
         {domain}
 """.format(**info))
-
-    #     print("[Optional] You can also connect with VSCode SSH Remote extension by:")
-    #     print(f"""
-    # 1. Set the following configuration into your SSH config file (~/.ssh/config):
-
-    #     Host *.trycloudflare.com
-    #         HostName %h
-    #         User root
-    #         Port {port}
-    #         ProxyCommand <PUT_THE_ABSOLUTE_CLOUDFLARE_PATH_HERE> access ssh --hostname %h
-
-    # 2. Connect to Remote SSH on VSCode (Ctrl+Shift+P and type "Connect to Host...") and paste this hostname:
-    #     {host}
-    #     """)
-    #     print(f'''
-
-        #   ''')
+            
     else:
         print(proc.stdout.readlines())
         raise Exception(
