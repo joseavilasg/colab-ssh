@@ -91,28 +91,33 @@ def launch_ssh_cloudflared(
   popen_command = shlex.split(popen_command)
 
   # Initial sleep time
-  sleep_time = 2.0
+  sleep_time = 8.0
 
   info = None
 
   # Create tunnel and retry if failed
-  if random_host:
-    for _ in range(5):
-      proc = Popen(popen_command, stdout=PIPE, close_fds=True)
-      if verbose:
-        print(f"DEBUG: Cloudflared process: PID={proc.pid}")
-      time.sleep(sleep_time)
+  # if random_host:
+  #   for _ in range(5):
+  #     proc = Popen(popen_command, stdout=PIPE, close_fds=True)
+  #     if verbose:
+  #       print(f"DEBUG: Cloudflared process: PID={proc.pid}")
+  #     time.sleep(sleep_time)
 
-      try:
-        info = get_argo_tunnel_config()
-        break
-      except Exception as e:
-        os.kill(proc.pid, signal.SIGKILL)
-        if verbose:
-          print(f"DEBUG: Exception: {e.args[0]}")
-          print(f"DEBUG: Killing {proc.pid}. Retrying...")
-      # Increase the sleep time and try again
-      sleep_time *= 1.5
+  #     try:
+  #       info = get_argo_tunnel_config()
+  #       break
+  #     except Exception as e:
+  #       os.kill(proc.pid, signal.SIGKILL)
+  #       if verbose:
+  #         print(f"DEBUG: Exception: {e.args[0]}")
+  #         print(f"DEBUG: Killing {proc.pid}. Retrying...")
+  #     # Increase the sleep time and try again
+  #     sleep_time *= 1.5
+  if random_host:
+    proc = Popen(popen_command, stdout=PIPE, close_fds=True)
+    time.sleep(sleep_time)
+    info = get_argo_tunnel_config()
+
   else:
     proc = Popen(popen_command, stdout=PIPE, close_fds=True)
     info = {
