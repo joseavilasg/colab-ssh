@@ -35,7 +35,6 @@ def launch_ssh_cloudflared(
         random_host=True,
         password="",
         public_key="",
-        port=22,
         verbose=False,
         kill_other_processes=True):
   # Kill any cloudflared process if running
@@ -71,8 +70,6 @@ def launch_ssh_cloudflared(
     pub_ssh_key = read_public_key(public_key)
     add_to_authorized_keys(pub_ssh_key)
 
-  os.system(f"echo 'Port {port}' >> /etc/ssh/sshd_config")
-
   expose_env_variable("LD_LIBRARY_PATH")
   expose_env_variable("COLAB_TPU_ADDR")
   expose_env_variable("COLAB_GPU")
@@ -87,37 +84,32 @@ def launch_ssh_cloudflared(
   # Prepare the cloudflared command
   popen_command = f'cloudflared tunnel  --metrics localhost:45678 {" ".join(extra_params)} run'
   if random_host:
-    popen_command = f'cloudflared tunnel --url ssh://localhost:{port} --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
+    popen_command = f'cloudflared tunnel --url ssh://localhost:22 --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
   popen_command = shlex.split(popen_command)
 
   # Initial sleep time
-  sleep_time = 8.0
+  sleep_time = 2.0
 
   info = None
 
   # Create tunnel and retry if failed
-  # if random_host:
-  #   for _ in range(5):
-  #     proc = Popen(popen_command, stdout=PIPE, close_fds=True)
-  #     if verbose:
-  #       print(f"DEBUG: Cloudflared process: PID={proc.pid}")
-  #     time.sleep(sleep_time)
-
-  #     try:
-  #       info = get_argo_tunnel_config()
-  #       break
-  #     except Exception as e:
-  #       os.kill(proc.pid, signal.SIGKILL)
-  #       if verbose:
-  #         print(f"DEBUG: Exception: {e.args[0]}")
-  #         print(f"DEBUG: Killing {proc.pid}. Retrying...")
-  #     # Increase the sleep time and try again
-  #     sleep_time *= 1.5
   if random_host:
-    proc = Popen(popen_command, stdout=PIPE, close_fds=True)
-    time.sleep(sleep_time)
-    info = get_argo_tunnel_config()
+    for _ in range(5):
+      proc = Popen(popen_command, stdout=PIPE, close_fds=True)
+      if verbose:
+        print(f"DEBUG: Cloudflared process: PID={proc.pid}")
+      time.sleep(sleep_time)
 
+      try:
+        info = get_argo_tunnel_config()
+        break
+      except Exception as e:
+        os.kill(proc.pid, signal.SIGKILL)
+        if verbose:
+          print(f"DEBUG: Exception: {e.args[0]}")
+          print(f"DEBUG: Killing {proc.pid}. Retrying...")
+      # Increase the sleep time and try again
+      sleep_time *= 1.5
   else:
     proc = Popen(popen_command, stdout=PIPE, close_fds=True)
     info = {
