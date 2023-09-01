@@ -136,10 +136,10 @@ def init_git(
     header = ""
   os.system(
       f"mkdir -p ~/.ssh && curl -s -L -f {header} {keys_url} >> ~/.ssh/authorized_keys")
-  
+
   # Go back to the parent folder
   os.chdir("../")
-  
+
   # Print the VSCode direct link
   try:
     if cloudflared:
