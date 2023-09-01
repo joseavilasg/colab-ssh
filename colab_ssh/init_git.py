@@ -13,7 +13,7 @@ from functools import partial
 from colab_ssh.utils.logger import get_logger
 from colab_ssh.utils.ui.render_html import render_template
 from colab_ssh._command import run_command as _run_command
-from .get_tunnel_config import get_tunnel_config, get_argo_tunnel_config
+from .get_tunnel_config import get_argo_tunnel_config
 from .utils import show_hint_message
 from colab_ssh.git import providers
 
@@ -144,8 +144,7 @@ def init_git(
   try:
     if cloudflared:
       output = get_argo_tunnel_config()
-    else:
-      output = get_tunnel_config()
+
     link = f"vscode://vscode-remote/ssh-remote+root@{output['domain']}:{output['port']}{os.getcwd()}/{repo_name}"
     if importlib.util.find_spec("IPython") and 'ipykernel' in sys.modules:
       from IPython.display import HTML, display
