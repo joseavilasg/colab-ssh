@@ -35,6 +35,7 @@ def launch_ssh_cloudflared(
         random_host=True,
         password="",
         public_key="",
+        port=22,
         verbose=False,
         kill_other_processes=True):
   # Kill any cloudflared process if running
@@ -70,6 +71,8 @@ def launch_ssh_cloudflared(
     pub_ssh_key = read_public_key(public_key)
     add_to_authorized_keys(pub_ssh_key)
 
+  os.system(f"echo 'Port {port}' >> /etc/ssh/sshd_config")
+
   expose_env_variable("LD_LIBRARY_PATH")
   expose_env_variable("COLAB_TPU_ADDR")
   expose_env_variable("COLAB_GPU")
@@ -84,7 +87,7 @@ def launch_ssh_cloudflared(
   # Prepare the cloudflared command
   popen_command = f'cloudflared tunnel  --metrics localhost:45678 {" ".join(extra_params)} run'
   if random_host:
-    popen_command = f'cloudflared tunnel --url ssh://localhost:22 --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
+    popen_command = f'cloudflared tunnel --url ssh://localhost:{port} --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
   popen_command = shlex.split(popen_command)
 
   # Initial sleep time
