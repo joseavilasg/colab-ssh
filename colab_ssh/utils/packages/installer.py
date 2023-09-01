@@ -8,7 +8,4 @@ def create_deb_installer():
 
 
 def install_deb_package(package_name, verbose=False):
-  if not package_name:
-    raise Exception("Package name not provided")
-
-  os.system(f"apt-get -qq install {package_name} > /dev/null")
+  os.system(f"apt-get -qq -y  install {package_name} > /dev/null")
