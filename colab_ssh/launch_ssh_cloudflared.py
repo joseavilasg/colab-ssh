@@ -98,9 +98,7 @@ def launch_ssh_cloudflared(
   # Create tunnel and retry if failed
   if random_host:
     for _ in range(5):
-      proc = Popen(
-          popen_command, stdout=PIPE, close_fds=True,
-          preexec_fn=os.setpgrp)
+      proc = Popen(popen_command, stdout=PIPE, close_fds=True)
       if verbose:
         print(f"DEBUG: Cloudflared process: PID={proc.pid}")
       time.sleep(sleep_time)
