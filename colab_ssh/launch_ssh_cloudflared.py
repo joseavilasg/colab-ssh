@@ -25,7 +25,7 @@ def read_public_key(input_string):
 
   file_path_pattern = r'^[a-zA-Z]:\\(\\[^<>:"/\\|?*]+)+$|^/([^<>:"/\\|?*]+(/[^<>:"/\\|?*]+)*)?$'
   if re.match(file_path_pattern, input_string):
-    with open(input_string, 'r') as f:
+    with open(input_string, 'r', encoding="utf-8") as f:
       return f.read()
 
   return None

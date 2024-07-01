@@ -3,7 +3,7 @@ import re
 
 def get_argo_tunnel_config(initial_path=""):
   hostname = None
-  with open(initial_path+"cloudflared.log", "r") as f:
+  with open(initial_path+"cloudflared.log", "r", encoding="utf-8") as f:
     output = "".join(f.readlines())
   results = re.findall(
       ':\"\| *https://(.+?.trycloudflare.com) *\|\"}', output)

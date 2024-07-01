@@ -13,5 +13,5 @@ def add_to_authorized_keys(pub_ssh_keys):
   ssh_folder_path.mkdir(
       parents=True, exist_ok=True)
 
-  with open(ssh_folder_path.joinpath("authorized_keys"), "a") as f:
+  with open(ssh_folder_path.joinpath("authorized_keys"), "a", encoding="utf-8") as f:
     f.write(pub_ssh_keys+"\n")

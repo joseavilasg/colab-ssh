@@ -3,7 +3,7 @@ import os
 
 def set_private_key(private_key, filename="/root/.ssh/id_rsa"):
   os.makedirs(os.path.dirname(filename), exist_ok=True)
-  with open(filename, "w") as f:
+  with open(filename, "w", encoding="utf-8") as f:
     f.write(private_key)
   os.chmod(filename, 0o600)
 
